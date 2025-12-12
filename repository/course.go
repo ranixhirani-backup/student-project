@@ -17,8 +17,8 @@ func (r *courseRepository) Create(course models.Course) (int, error){ //function
 	var id int														 //this function takes course from model and input parameter and returns either int or error			
 	query:= `
 		INSERT INTO course (course_name, credits, description)
-		VALUES($1, $2, $2)
-		RETURNING student_id
+		VALUES($1, $2, $3)
+		RETURNING course_id
 	`
 	err:= r.DB.QueryRow(query,
 	course.CourseName,

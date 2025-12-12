@@ -31,6 +31,10 @@ func main() {
     studentService := services.NewStudentService(studentRepo)
     studentHandler := handlers.NewStudentHandler(studentService)
 
+    courseRepo := repository.NewCourseRepository(postgresDB)
+    courseService := services.NewCourseService(courseRepo)
+    courseHandler := handlers.NewCourseHandler(courseService)
+
     // Setup Chi router
     r := chi.NewRouter()
     r.Use(middleware.Logger)
@@ -38,6 +42,8 @@ func main() {
 
     r.Post("/students", studentHandler.CreateStudent)
     r.Get("/students", studentHandler.GetStudents)
+
+    r.Post("/course", courseHandler.CreateCourse)
 
     log.Println("Server running on :8080")
     http.ListenAndServe(":8080", r)
