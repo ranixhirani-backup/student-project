@@ -19,7 +19,7 @@ func (s *enrollmentService) CreateEnrollment(enrollment models.Enrollment) (int,
 	return s.repo.Create(enrollment)
 }
 func setStatus(e *models.Enrollment){
-	e.Status = "pending"
+	e.Status = string(models.StatusPending)
 }
 
 func (s *enrollmentService) AcceptEnrollment(id int) error {
