@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"studentProject/models"
 	"studentProject/services"
+	"strconv"
+    "github.com/go-chi/chi/v5"
+
 )
 type EnrollmentHandler struct{
 	service services.EnrollmentService
@@ -28,3 +31,19 @@ func (h *EnrollmentHandler) CreateEnrollment(w http.ResponseWriter, r *http.Requ
 		"enrollment_id" : id,
 	})
 }
+	func (h *EnrollmentHandler) AcceptEnrollment(w http.ResponseWriter, r *http.Request){
+		idStr := chi.URLParam(r, "id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "invalid enrollment id", http.StatusBadRequest)
+			return
+		}
+		err = h.service.AcceptEnrollment(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		 json.NewEncoder(w).Encode(map[string]string{
+        "message": "Enrollment accepted successfully",
+    })
+	}

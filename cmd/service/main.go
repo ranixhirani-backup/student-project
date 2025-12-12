@@ -51,6 +51,7 @@ func main() {
 
     r.Post("/enrollment", enrollmentHandler.CreateEnrollment)
 
+    r.Post("/enrollments/{id}/accept", enrollmentHandler.AcceptEnrollment)
     log.Println("Server running on :8080")
     http.ListenAndServe(":8080", r)
 }

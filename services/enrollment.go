@@ -6,6 +6,7 @@ import (
 )
 type EnrollmentService interface{
 	CreateEnrollment(enrollment models.Enrollment) (int, error)
+	AcceptEnrollment(enrollment_id int) error
 }
 type enrollmentService struct{
 	repo repository.EnrollmentRepository
@@ -19,4 +20,8 @@ func (s *enrollmentService) CreateEnrollment(enrollment models.Enrollment) (int,
 }
 func setStatus(e *models.Enrollment){
 	e.Status = "pending"
+}
+
+func (s *enrollmentService) AcceptEnrollment(id int) error {
+	return s.repo.UpdateEnrollmentStatus(id, string(models.StatusAccepted))
 }

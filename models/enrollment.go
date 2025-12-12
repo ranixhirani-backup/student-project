@@ -9,3 +9,10 @@ type Enrollment struct{
     EnrollmentDate time.Time `json:"enrollment_date"`
     Status         string    `json:"status"`
 }
+
+type EnrollmentStatus string
+
+const (
+	StatusPending  EnrollmentStatus = "Pending"
+	StatusAccepted EnrollmentStatus = "Accepted"
+)

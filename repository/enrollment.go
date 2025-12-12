@@ -5,6 +5,7 @@ import(
 )
 type EnrollmentRepository interface{
 	Create(enrollment models.Enrollment) (int, error)
+	UpdateEnrollmentStatus(enrollment_id int, status string) (error)
 }
 type enrollmentRepository struct{
 	DB *sql.DB
@@ -24,4 +25,13 @@ func (r *enrollmentRepository) Create(enrollment models.Enrollment) (int, error)
 	enrollment.CourseID,
 	).Scan(&id)
 	return id, err
+}
+func (r *enrollmentRepository) UpdateEnrollmentStatus(enrollment_id int, status string) (error) {
+	query := `
+		UPDATE enrollment 
+		SET status = $1
+		WHERE enrollment_id = $2
+	`
+	_, err:= r.DB.Exec(query, status, enrollment_id)
+	return err
 }
