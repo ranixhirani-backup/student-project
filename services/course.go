@@ -2,6 +2,7 @@ package services
 import(
 	"studentProject/models"
 	"studentProject/repository"
+	myErr "studentProject/"
 )
 type CourseService interface{ //interface of CourseService, any struct that would implement CreateCourse with the given signature will automatically implement this interface
 	CreateCourse(course models.Course) (int, error)
@@ -14,5 +15,14 @@ func NewCourseService(repo repository.CourseRepository) CourseService{ //This is
 		return &courseService{repo:repo}
 }
 func (s *courseService) CreateCourse(course models.Course) (int, error){ //implementation of the method defined in the interface
+	
+	exists, err := s.repo.CourseExists(course.CourseId)
+	if err != nil {
+		return 0, err
+	}
+	if exists {
+		return 0, 
+	}
+	
 	return s.repo.Create(course) 
 }
