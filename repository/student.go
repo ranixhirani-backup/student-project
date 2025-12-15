@@ -8,6 +8,7 @@ import (
 type StudentRepository interface {
     Create(student models.Student) (int, error)
     GetAll() ([]models.Student, error)
+    GetStudentById(studentId int) (models.Student, error)
 }
 
 type studentRepository struct {
@@ -51,4 +52,21 @@ func (r *studentRepository) GetAll() ([]models.Student, error){
     }
     return students, nil
 
+}
+
+func (r *studentRepository) GetStudentById(studentId int) (models.Student, error){
+    query := `Select student_id, first_name, last_name, email, gender
+     FROM student
+     WHERE student_id = $1
+     `
+    var student models.Student
+    err:= r.DB.QueryRow(query, studentId).Scan(
+        &student.StudentId,
+        &student.FirstName,
+        &student.LastName,
+        &student.Email,
+        &student.Gender,
+    )
+    return student, err
+    
 }

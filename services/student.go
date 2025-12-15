@@ -1,13 +1,16 @@
 package services
 import (
 	"errors"
+	"database/sql"
 	"studentProject/models"
 	"studentProject/repository"
+	myErr "studentProject/errors"
 )
 
 type StudentService interface {
 	CreateStudent(student models.Student)(int, error)
 	GetAllStudents() ([]models.Student, error)
+	GetStudent(studentId int)(models.Student, error)
 }
 
 type studentService struct {
@@ -29,5 +32,16 @@ func (s *studentService) CreateStudent(student models.Student) (int, error){
 
 func (s *studentService) GetAllStudents() ([]models.Student, error){
 	return s.repo.GetAll()
+}
+
+func (s *studentService) GetStudent(studentId int) (models.Student, error){
+	student, err := s.repo.GetStudentById(studentId)
+	if err != nil {
+		if err == sql.ErrNoRows{
+			return models.Student{}, myErr.ErrStudentNotFound
+		}
+		return models.Student{}, err
+	}
+	return student, nil
 }
 
