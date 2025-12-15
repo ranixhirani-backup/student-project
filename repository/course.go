@@ -5,7 +5,7 @@ import(
 )
 type CourseRepository interface{
 	Create(course models.Course) (int, error) //Any struct that has a method with the exact same signature automatically implements this interface.
-	CourseExists(courseId int) (bool, error)
+	CourseExistsByName(courseName string) (bool, error)
 }
 type courseRepository struct{
 	DB *sql.DB //pointer to db connection
@@ -29,14 +29,14 @@ func (r *courseRepository) Create(course models.Course) (int, error){ //function
 	return id,err
 }
 
-func(r *courseRepository) CourseExists(courseId int) (bool, error){
+func(r *courseRepository) CourseExistsByName(courseName string) (bool, error){
 	query := `
-		SELECT 1
+		SELECT COUNT(*)
 		FROM course
-		WHERE course_id = $1 LIMIT 1
+		WHERE course_name = $1
 	`
 	var count int
-	err := r.DB.QueryRow(query, courseId).Scan(&count)
+	err := r.DB.QueryRow(query, courseName).Scan(&count)
 	if err != nil {
 		return false, err
 	}

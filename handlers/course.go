@@ -3,8 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"errors"
 	"studentProject/models"
 	"studentProject/services"
+	myErr "studentProject/errors"
 )
 type CourseHandler struct{
 	service services.CourseService
@@ -20,6 +22,10 @@ func (h *CourseHandler) CreateCourse(w http.ResponseWriter, r *http.Request){
 	}
 	id, err := h.service.CreateCourse(course)
 	if err != nil {
+		if errors.Is(err, myErr.ErrCourseAlreadyExists){
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
