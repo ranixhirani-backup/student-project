@@ -3,6 +3,7 @@ import "errors"
 var ErrStudentAlreadyEnrolled = errors.New("student is already enrolled in this course")
 var ErrCourseAlreadyExists = errors.New("course already exists")
 var ErrStudentNotFound = errors.New("student not found")
+var ErrInvalidStudentId = errors.New("invalid student id")
 func Wrap(msg string) error {
 	return errors.New(msg)
 }

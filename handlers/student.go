@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"studentProject/errors"
 	"studentProject/models"
 	"studentProject/services"
 
@@ -46,28 +45,21 @@ func (h *StudentHandler) GetStudents(w http.ResponseWriter, r *http.Request){
    json.NewEncoder(w).Encode(students)
 }
 
-func (h *StudentHandler) GetStudentById(w http.ResponseWriter, r *http.Request){
-    idStr := chi.URLParam(r, "id")
-    studentId, err := strconv.Atoi(idStr)
-    //ADD PARAMENTER VALIDATION 
-    student, err := h.service.GetStudent(studentId)
-    if err != nil {
-        httpStatus := mapDomainErrorToHTTP(err)
-        http.Error(w, err.Error(), httpStatus)
-        return
-    }
+func (h *StudentHandler) GetStudentById(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	studentId, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "invalid student id", http.StatusBadRequest)
+		return
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(student)
-}
+	student, err := h.service.GetStudent(studentId)
+	if err != nil {
+		httpStatus := MapDomainErrorToHTTP(err)
+		http.Error(w, err.Error(), httpStatus)
+		return
+	}
 
-func mapDomainErrorToHTTP(err error) int{
-    switch err {
-    case errors.ErrStudentNotFound:
-        return http.StatusNotFound
-    case errors.ErrStudentAlreadyEnrolled:
-        return http.StatusConflict
-    default:
-        return http.StatusInternalServerError
-    }
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(student)
 }

@@ -72,3 +72,22 @@ func (h *EnrollmentHandler) AcceptEnrollment(w http.ResponseWriter, r *http.Requ
 		"message": "Enrollment accepted successfully",
 	})
 }
+
+func (h *EnrollmentHandler) GetCoursesByStudentId(w http.ResponseWriter, r *http.Request){
+	idStr := chi.URLParam(r, "id")
+	studentId, err := strconv.Atoi(idStr)
+	if err != nil{
+		http.Error(w, "invalid student id", http.StatusBadRequest)
+		return
+	}
+	courses, err := h.service.GetCoursesByStudentId(studentId)
+	if err != nil {
+		httpStatus := MapDomainErrorToHTTP(err)
+		http.Error(w, err.Error(), httpStatus)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(courses)
+}
+
+
