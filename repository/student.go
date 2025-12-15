@@ -68,5 +68,5 @@ func (r *studentRepository) GetStudentById(studentId int) (models.Student, error
         &student.Gender,
     )
     return student, err
-    
+
 }
