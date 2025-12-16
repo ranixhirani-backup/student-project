@@ -3,12 +3,15 @@ package repository
 import (
     "database/sql"
     "studentProject/models"
+    "strconv"
 )
 
 type StudentRepository interface {
     Create(student models.Student) (int, error)
     GetAll() ([]models.Student, error)
     GetStudentById(studentId int) (models.Student, error)
+    UpdateStudent(studentId int, patch models.StudentUpdate) (models.Student, error)
+
 }
 
 type studentRepository struct {
@@ -69,4 +72,53 @@ func (r *studentRepository) GetStudentById(studentId int) (models.Student, error
     )
     return student, err
 
+}
+
+func (r *studentRepository) UpdateStudent(studentId int, patch models.StudentUpdate) (models.Student, error) {
+
+    query := "UPDATE student SET "
+    args := []interface{}{}
+    idx := 1
+
+    if patch.FirstName != nil {
+        query += "first_name = $" + strconv.Itoa(idx) + ", "
+        args = append(args, *patch.FirstName)
+        idx++
+    }
+    if patch.LastName != nil {
+        query += "last_name = $" + strconv.Itoa(idx) + ", "
+        args = append(args, *patch.LastName)
+        idx++
+    }
+    if patch.Email != nil {
+        query += "email = $" + strconv.Itoa(idx) + ", "
+        args = append(args, *patch.Email)
+        idx++
+    }
+    if patch.Gender != nil {
+        query += "gender = $" + strconv.Itoa(idx) + ", "
+        args = append(args, *patch.Gender)
+        idx++
+    }
+
+    if len(args) == 0 {
+        // nothing to update, just return current student
+        return r.GetStudentById(studentId)
+    }
+
+    // remove trailing comma and space
+    query = query[:len(query)-2]
+
+    // add WHERE clause
+    query += " WHERE student_id = $" + strconv.Itoa(idx)
+    args = append(args, studentId)
+
+    // execute update
+    _, err := r.DB.Exec(query, args...)
+    if err != nil {
+        return models.Student{}, err
+    }
+
+    // return the updated student
+    return r.GetStudentById(studentId)
 }

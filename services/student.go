@@ -11,6 +11,7 @@ type StudentService interface {
 	CreateStudent(student models.Student)(int, error)
 	GetAllStudents() ([]models.Student, error)
 	GetStudent(studentId int)(models.Student, error)
+	UpdateStudent(studentId int, patch models.StudentUpdate) (models.Student, error)
 }
 
 type studentService struct {
@@ -42,6 +43,15 @@ func (s *studentService) GetStudent(studentId int) (models.Student, error){
 		}
 		return models.Student{}, err
 	}
+	return student, nil
+}
+
+func (s *studentService)UpdateStudent(studentId int, patch models.StudentUpdate) (models.Student, error){
+	student, err := s.repo.UpdateStudent(studentId, patch)
+	if err != nil {
+		return models.Student{}, err
+	}
+
 	return student, nil
 }
 
