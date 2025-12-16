@@ -4,6 +4,7 @@ import (
     "database/sql"
     "studentProject/models"
     "strconv"
+    "errors"
 )
 
 type StudentRepository interface {
@@ -11,6 +12,7 @@ type StudentRepository interface {
     GetAll() ([]models.Student, error)
     GetStudentById(studentId int) (models.Student, error)
     UpdateStudent(studentId int, patch models.StudentUpdate) (models.Student, error)
+    DeleteStudentById(studentId int) (string, error)
 
 }
 
@@ -121,4 +123,21 @@ func (r *studentRepository) UpdateStudent(studentId int, patch models.StudentUpd
 
     // return the updated student
     return r.GetStudentById(studentId)
+}
+
+func (r *studentRepository) DeleteStudentById(studentId int) (string, error){
+    query := `DELETE FROM student WHERE student_id = $1`
+    result, err := r.DB.Exec(query, studentId)
+    if err != nil {
+        return "", err
+    }
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        return "", err
+    }
+       if rowsAffected == 0 {
+        return "", errors.New("no student found to delete")
+    }
+    return "Student has been deleted.", nil
+
 }

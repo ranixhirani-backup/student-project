@@ -85,3 +85,22 @@ func (h *StudentHandler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updatedStudent)
 
 }
+
+func (h *StudentHandler) DeleteStudentById(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	studentId, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "invalid student id", http.StatusBadRequest)
+		return
+	}
+
+	str, err := h.service.DeleteStudentById(studentId)
+	if err != nil {
+		httpStatus := MapDomainErrorToHTTP(err)
+		http.Error(w, err.Error(), httpStatus)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(str)
+}

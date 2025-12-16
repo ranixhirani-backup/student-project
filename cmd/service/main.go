@@ -48,7 +48,7 @@ func main() {
     r.Get("/students", studentHandler.GetStudents)
     r.Get("/students/{id}", studentHandler.GetStudentById)
     r.Patch("/student/{id}", studentHandler.UpdateStudent)
-    
+    r.Delete("/student/{id}", studentHandler.DeleteStudentById)    
 
     r.Post("/course", courseHandler.CreateCourse)
 

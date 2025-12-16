@@ -12,6 +12,7 @@ type StudentService interface {
 	GetAllStudents() ([]models.Student, error)
 	GetStudent(studentId int)(models.Student, error)
 	UpdateStudent(studentId int, patch models.StudentUpdate) (models.Student, error)
+	DeleteStudentById(studentId int) (string, error)
 }
 
 type studentService struct {
@@ -53,5 +54,13 @@ func (s *studentService)UpdateStudent(studentId int, patch models.StudentUpdate)
 	}
 
 	return student, nil
+}
+
+func (s *studentService)DeleteStudentById(studentId int) (string, error){
+	string, err := s.repo.DeleteStudentById(studentId)
+	if err != nil {
+		return "", err
+	}
+	return string, nil
 }
 
